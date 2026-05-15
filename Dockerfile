@@ -1,14 +1,13 @@
-# Base image — replace with the appropriate runtime for this project.
-# The AI-generated application code may update this file automatically.
-FROM python:3.12-slim
-
-WORKDIR /app
-
-COPY requirements.txt* ./
-RUN pip install --no-cache-dir -r requirements.txt 2>/dev/null || true
-
+FROM nginx:1.25-alpine
+WORKDIR /usr/share/nginx/html
 COPY . .
-
+RUN printf 'server {
+  listen 8080;
+  server_name _;
+  root /usr/share/nginx/html;
+  index index.html index.htm;
+  try_files $uri $uri/ /index.html;
+}
+' > /etc/nginx/conf.d/default.conf
 EXPOSE 8080
-
-CMD ["python", "main.py"]
+CMD ["nginx", "-g", "daemon off;"]
